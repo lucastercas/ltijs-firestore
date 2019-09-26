@@ -4,20 +4,37 @@
   "description": "Firestore plugin for ltijs",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node index.js"
   },
-  "author": "Lucas de Macedo",
-  "license": "ISC",
+  "author": "lucastercas",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/lucastercas/ltijs-firestore.git#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucastercas/ltijs-firestore.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lucastercas/ltijs-firestore/issues"
+  },
   "devDependencies": {
     "@babel/cli": "^7.6.2",
     "chai": "^4.2.0",
     "mocha": "^6.2.0"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
     "@firebase/app": "^0.4.18",
     "@firebase/firestore": "^1.5.4",
-    "@google-cloud/firestore": "^2.3.0",
     "firebase-admin": "^8.6.0"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "ignore": [
+      "node_modules/",
+      "dist/"
+    ],
+    "env": [
+      "mocha"
+    ]
   }
 }

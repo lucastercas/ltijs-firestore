@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+require("@firebase/firestore");
 
 class Database {
   /**

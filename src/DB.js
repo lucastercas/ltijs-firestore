@@ -23,16 +23,16 @@ class Database {
 
   async Get(KEY, collection, query) {
     const colRef = this.db.collection(collection);
-    // const queryRef = colRef.where();
+    const querySnap = await colRef.get();
 
-    // const docSnap = await docRef.get();
-    // const docData = docSnap.data();
+    // TODO: return only docs that satisfy the query
+    const docs = querySnap.docs;
+    docs.map(doc => {});
 
-    // if (docData === undefined) throw new Error(`Document ${path} not defined`);
-
-    // return docData;
+    console.log(docs);
   }
 
+  // TODO: Check if document with this data already exists on database, to avoid replication of data
   async Insert(KEY, collection, data, index) {
     const colRef = this.db.collection(collection);
     const docRef = await colRef.add(data);

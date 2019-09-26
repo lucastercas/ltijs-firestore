@@ -1,0 +1,19 @@
+{
+  "name": "ltijs-firestore",
+  "version": "1.0.0",
+  "description": "Firestore plugin for ltijs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lucas de Macedo",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.6.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@firebase/app": "^0.4.18",
+    "@firebase/firestore": "^1.5.4"
+  }
+}

@@ -1,11 +1,22 @@
 const db = require("./src/DB.js");
 
-console.log("iae");
-console.log(db);
-
+const serviceAccountFile = require("./env/serviceAccount.json");
 const firestore = new db({
-  apiKey: "",
-  projectId: "ltijs-firestore"
+  url: "https://ltijs-firestore.firebaseio.com",
+  serviceAccountFile: serviceAccountFile
 });
 
-firestore.Get("test-collection/test-document");
+const doc = firestore.Get("", "test-collection/test-document");
+doc.then(data => {
+  console.log(data);
+});
+
+firestore.Insert("", "test-collection/test-document-2", {
+  iae: "oi"
+});
+
+firestore.Modify("", "test-collection/test-document-3", "", {
+  iae: "ronaldo"
+});
+
+module.exports = db;

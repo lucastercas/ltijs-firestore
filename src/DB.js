@@ -25,6 +25,7 @@ class Database {
    * @param {String} KEY - TODO
    * @param {String} path - Path of the document("${collection}/${document}")
    * @param {Object} query - TODO:
+   * @returns {FirebaseFirestore.DocumentData} -
    */
   async Get(KEY, path, query) {
     const docRef = this.db.doc(path);
@@ -42,6 +43,7 @@ class Database {
    * @param {String} path - Path of the document ("${collection}/${document}")
    * @param {Object} data - Object of the data
    * @param {*} index - TODO:
+   * @returns {FilebaseFirestore.writeResult}
    */
   async Insert(KEY, path, data, index) {
     const docRef = this.db.doc(path);
@@ -55,6 +57,7 @@ class Database {
    * @param {String} path - Path of the document("${collection}/${document}")
    * @param {Object} query - TODO
    * @param {Object} modification - The new object
+   * @returns {FilebaseFirestore.writeResult}
    */
   async Modify(KEY, path, query, modification) {
     const docRef = this.db.doc(path);
@@ -66,6 +69,7 @@ class Database {
    * @description
    * @param {String} path - Path of the document("${collection}/${document}")
    * @param {Object} query - TODO
+   * @returns {FilebaseFirestore.writeResult}
    */
   async Delete(path, query) {
     const docRef = this.db.doc(path);

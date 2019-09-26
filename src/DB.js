@@ -5,13 +5,13 @@ class Database {
   /**
    *
    * @param {Object} database
-   * @param {String} database.url
+   * @param {String} database.databaseURL
    * @param {?} database.serviceAccountFile
    */
   constructor(database) {
     const app = admin.initializeApp({
       credential: admin.credential.cert(database.serviceAccountFile),
-      databaseURL: database.url
+      databaseURL: database.databaseURL
     });
     this.db = app.firestore();
   }
@@ -21,85 +21,47 @@ class Database {
    */
   async setup() {}
 
-  /**
-   * @description Get the document specified in "path"
-   * @param {String} KEY - TODO
-   * @param {String} path - Path of the document("${collection}/${document}")
-   * @param {Object} query - TODO:
-   * @returns {FirebaseFirestore.DocumentData} -
-   */
-  async Get(KEY, path, query) {
-    const docRef = this.db.doc(path);
-    const docSnap = await docRef.get();
-    const docData = docSnap.data();
+  async Get(KEY, collection, query) {
+    const colRef = this.db.collection(collection);
+    // const queryRef = colRef.where();
 
-    if (docData === undefined) throw new Error(`Document ${path} not defined`);
+    // const docSnap = await docRef.get();
+    // const docData = docSnap.data();
 
-    return docData;
+    // if (docData === undefined) throw new Error(`Document ${path} not defined`);
+
+    // return docData;
   }
 
-  /**
-   * @description Inserts document referenced by path into database
-   * @param {String} KEY - TODO
-   * @param {String} path - Path of the document ("${collection}/${document}")
-   * @param {Object} data - Object of the data
-   * @param {*} index - TODO:
-   * @returns {FilebaseFirestore.writeResult}
-   */
-  async Insert(KEY, path, data, index) {
-    const docRef = this.db.doc(path);
-    const writeResult = await docRef.create(data);
-    return writeResult;
+  async Insert(KEY, collection, data, index) {
+    const colRef = this.db.collection(collection);
+    const docRef = await colRef.add(data);
+    return docRef;
   }
 
-  /**
-   * @description Modify the document specified in "path"
-   * @param {String} KEY - TODO
-   * @param {String} path - Path of the document("${collection}/${document}")
-   * @param {Object} query - TODO
-   * @param {Object} modification - The new object
-   * @returns {FilebaseFirestore.writeResult}
-   */
-  async Modify(KEY, path, query, modification) {
-    const docRef = this.db.doc(path);
-    const writeResult = await docRef.update(modification, { merge: true });
-    return writeResult;
-  }
+  // async Modify(KEY, collection, query, modification) {
+  //   const docRef = this.db.doc(path);
+  //   const writeResult = await docRef.update(modification, { merge: true });
+  //   return writeResult;
+  // }
 
-  /**
-   * @description
-   * @param {String} path - Path of the document("${collection}/${document}")
-   * @param {Object} query - TODO
-   * @returns {FilebaseFirestore.writeResult}
-   */
-  async Delete(path, query) {
-    const docRef = this.db.doc(path);
-    const writeResult = await docRef.delete();
-    return writeResult;
-  }
+  // async Delete(collection, query) {
+  //   const docRef = this.db.doc(`lti/${document}`);
+  //   const writeResult = await docRef.delete();
+  //   return writeResult;
+  // }
 
-  /**
-   * @description
-   * @param {String} data
-   * @param {String} secret
-   */
-  async Encrypt(data, secret) {
-    // TODO
-  }
+  // async Encrypt(data, secret) {
+  //   // TODO
+  // }
 
-  /**
-   * @description
-   * @param {String} data
-   * @param {String} _iv
-   * @param {String} secret
-   */
-  async Decrypt(data, _iv, secret) {
-    // TODO
-  }
+  // async Decrypt(data, _iv, secret) {
+  //   // TODO
+  // }
 
-  async Close() {
-    // TODO: This is not needed for firestore
-  }
+  // async Close() {
+  //   // TODO: This is not needed for firestore
+  // }
 }
 
 module.exports = Database;

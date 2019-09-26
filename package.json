@@ -4,12 +4,14 @@
   "description": "Firestore plugin for ltijs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "author": "Lucas de Macedo",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.6.2"
+    "@babel/cli": "^7.6.2",
+    "chai": "^4.2.0",
+    "mocha": "^6.2.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",

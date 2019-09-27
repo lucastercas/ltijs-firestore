@@ -49,5 +49,12 @@ describe("Testing Firestore Database", () => {
     });
   });
 
-  // it("Should modify document specified in query ", async () => {});
+  it("Should modify document specified in query ", async () => {});
+
+  it("Should delete document in specified collection", async () => {
+    db.Delete("idtoken", {
+      iss: "issuer_1",
+      user: "user_1"
+    });
+  });
 });

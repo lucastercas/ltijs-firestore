@@ -16,6 +16,7 @@ import {
   Nonce
 } from "./interfaces";
 require("@firebase/firestore");
+const crypto = require("crypto");
 
 interface DatabaseInfo {
   serviceAccountFile: string;
@@ -101,7 +102,6 @@ export default class Database {
     const primaryKey: string = this.buildPrimaryKey(collection, data);
 
     const queryResult: boolean = await this.hasDocument(colRef, primaryKey);
-    console.log("Result: ", queryResult);
     if (queryResult) {
       return null;
     } else {
@@ -153,15 +153,36 @@ export default class Database {
     return true;
   }
 
-  // async Encrypt(data, secret) {
-  //   // TODO
-  // }
+  async Encrypt(data: any, secret: string) {
+    const hash = crypto.createHash("sha256");
+    hash.update(secret);
+    const key = hash.digest().slice(0, 32);
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+    let encrypted = cipher.update(data);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return {
+      iv: iv.toString("hex"),
+      data: encrypted.toString("hex")
+    };
+  }
+  async Decrypt(data: any, _iv: string, secret: string) {
+    const hash = crypto.createHash("sha256");
+    hash.update(secret);
+    const key = hash.digest().slice(0, 32);
+    const iv = Buffer.from(_iv, "hex");
+    const encryptedText = Buffer.from(data, "hex");
+    const decipher = crypto.createDecipheriv(
+      "aes-256-cbc",
+      Buffer.from(key),
+      iv
+    );
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
+  }
 
-  // async Decrypt(data, _iv, secret) {
-  //   // TODO
-  // }
-
-  // async Close() {
-  //   // TODO: This is not needed for firestore
-  // }
+  async Close() {
+    return true;
+  }
 }

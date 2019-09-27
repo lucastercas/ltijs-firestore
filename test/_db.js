@@ -27,21 +27,27 @@ describe("Testing Firestore Database", () => {
       iss: "issuer_1",
       user: "user_1"
     });
-    expect(docRef).to.not.be.undefined;
-    const docSnap = await docRef.get();
-    const docData = docSnap.data();
-    expect(docData).to.not.be.undefined;
+    expect(docRef).to.not.be.null;
+  });
+  it("Should not insert document into specified collection if duplicated", async () => {
+    const docRef = await db.Insert(false, "idtoken", {
+      iss: "issuer_1",
+      user: "user_1"
+    });
+    expect(docRef).to.be.null;
   });
 
   it("Get document with query should return correct document", async () => {
-    const queryResult = await db.Get(false, "platform", {
-      path: "path_1",
+    const queryResult = await db.Get(false, "idtoken", {
+      iss: "issuer_1",
       user: "user_1"
     });
     queryResult.forEach(doc => {
       const data = doc.data();
-      expect(data).to.have.property("path");
+      expect(data).to.have.property("iss");
       expect(data).to.have.property("user");
     });
   });
+
+  // it("Should modify document specified in query ", async () => {});
 });

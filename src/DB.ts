@@ -3,7 +3,8 @@ import {
   Query,
   QuerySnapshot,
   QueryDocumentSnapshot,
-  DocumentReference
+  DocumentReference,
+  WriteResult
 } from "@google-cloud/firestore";
 import * as admin from "firebase-admin";
 import {
@@ -23,6 +24,15 @@ interface DatabaseInfo {
 
 export default class Database {
   db: FirebaseFirestore.Firestore;
+  primaryKeys: any = {
+    idtoken: ["iss", "user"],
+    contexttoken: ["path", "user"],
+    platform: ["url"],
+    publickey: ["kid"],
+    privatekey: ["kid"],
+    accesstoken: ["platformUrl"],
+    nonce: ["nonce"]
+  };
   /**
    *
    * @param {Object} database
@@ -52,25 +62,55 @@ export default class Database {
     return querySnap.docs;
   }
 
-  /**
-   * @description
-   */
+  async hasDocument(
+    colRef: CollectionReference,
+    key: string
+  ): Promise<boolean> {
+    const querySnap: QuerySnapshot = await colRef.get();
+    const docs: QueryDocumentSnapshot[] = querySnap.docs;
+    const result = docs.some(doc => {
+      return doc.id === key;
+    });
+    return result;
+  }
+
+  buildPrimaryKey(collection: string, data: any) {
+    let documentKey: string = "";
+    const primaryKeys = this.primaryKeys[collection];
+    primaryKeys.forEach((key: string) => {
+      if (!(key in data)) console.error(`Object dont have key ${key}`);
+      documentKey += data[key];
+    });
+    return documentKey;
+  }
+
   async setup() {}
 
-  // TODO: Check if document with this data already exists on database, to avoid replication of data
+  /* 
+    TODO: Check if document with this data already exists on database, to avoid replication of data.
+    To solve this, the name of the document can be the primary key of the document.
+  */
   async Insert(
-    KEY: string,
+    ENCRYPTIONKEY: string,
     collection: string,
     data: any,
     index: any
-  ): Promise<DocumentReference> {
-    const colRef = this.db.collection(collection);
-    const document: DocumentReference = await colRef.add(data);
-    return document;
+  ): Promise<WriteResult | null> {
+    const colRef: CollectionReference = this.db.collection(collection);
+    let result: WriteResult | null = null;
+    const primaryKey: string = this.buildPrimaryKey(collection, data);
+
+    const queryResult: boolean = await this.hasDocument(colRef, primaryKey);
+    console.log("Result: ", queryResult);
+    if (queryResult) {
+      return null;
+    } else {
+      return await colRef.doc(primaryKey).create(data);
+    }
   }
 
   async Get(
-    KEY: string,
+    ENCRYPTIONKEY: string,
     collection: string,
     query: any
   ): Promise<QueryDocumentSnapshot[]> {
@@ -82,15 +122,36 @@ export default class Database {
     return queryResult;
   }
 
-  async Modify(KEY: string, collection: string, query: any, modification: any) {
+  async Modify(
+    ENCRYPTIONKEY: string,
+    collection: string,
+    query: any,
+    modification: any
+  ) {
     const colRef = this.db.collection(collection);
+    const queryResult: QueryDocumentSnapshot[] = await this.queryCollection(
+      colRef,
+      query
+    );
+    queryResult.forEach(doc => {
+      const docRef = doc.ref;
+      docRef.update(modification);
+    });
+    return true;
   }
 
-  // async Delete(collection, query) {
-  //   const docRef = this.db.doc(`lti/${document}`);
-  //   const writeResult = await docRef.delete();
-  //   return writeResult;
-  // }
+  async Delete(collection: string, query: any) {
+    const colRef: CollectionReference = this.db.collection(collection);
+    const queryResult: QueryDocumentSnapshot[] = await this.queryCollection(
+      colRef,
+      query
+    );
+    queryResult.forEach(doc => {
+      const docRef = doc.ref;
+      docRef.delete();
+    });
+    return true;
+  }
 
   // async Encrypt(data, secret) {
   //   // TODO

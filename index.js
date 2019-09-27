@@ -1,1 +1,2 @@
-module.exports = require("./src/DB");
+const db = require("./dist/DB");
+module.exports = db.default;

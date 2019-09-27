@@ -4,7 +4,7 @@ require("@firebase/firestore");
 
 const LTI = require("ltijs").Provider;
 
-const FirestoreDB = require("../src/DB");
+const FirestoreDB = require("../index");
 
 describe("Testing Firestore Database", () => {
   let db;
@@ -23,21 +23,25 @@ describe("Testing Firestore Database", () => {
   });
 
   it("Should insert correct document into specified collection", async () => {
-    const docRef = await db.Insert(false, "platform", {
-      platformName: "Name of the Platform",
-      platformUrl: "https://www.google.com"
+    const docRef = await db.Insert(false, "idtoken", {
+      iss: "issuer_1",
+      user: "user_1"
     });
     expect(docRef).to.not.be.undefined;
-
     const docSnap = await docRef.get();
     const docData = docSnap.data();
     expect(docData).to.not.be.undefined;
   });
 
   it("Get document with query should return correct document", async () => {
-    const docRef = await db.Get(false, "platform", {
-      platformUrl: "https://www.google.com"
+    const queryResult = await db.Get(false, "platform", {
+      path: "path_1",
+      user: "user_1"
     });
-    expect(docRef).to.not.be.undefined;
+    queryResult.forEach(doc => {
+      const data = doc.data();
+      expect(data).to.have.property("path");
+      expect(data).to.have.property("user");
+    });
   });
 });
